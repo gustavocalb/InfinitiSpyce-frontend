@@ -15,10 +15,13 @@ export function Sidebar() {
 
   const [isActiveHomeButton, setIsActiveHomeButton] = useState(false)
   const [isActiveProfileButton, setIsActiveProfileButton] = useState(false)
+  const [isActiveNotificationButton, setIsActiveNotificationButton] = useState(false)
+
 
   function handleHomeButton() {
     if (isActiveProfileButton) {
       setIsActiveProfileButton(false)
+      setIsActiveNotificationButton(false)
     }
     setIsActiveHomeButton(true)
     Router.push('/')
@@ -26,10 +29,20 @@ export function Sidebar() {
 
   function handleProfileButton() {
     if (isActiveHomeButton) {
+      setIsActiveNotificationButton(false)
       setIsActiveHomeButton(false)
     }
     setIsActiveProfileButton(true)
     Router.push('/profile')
+  }
+
+  function handleNotificationButton() {
+    if (isActiveHomeButton) {
+      setIsActiveHomeButton(false)
+      setIsActiveProfileButton(false)
+    }
+    setIsActiveNotificationButton(true)
+    Router.push('/')
   }
   
 
@@ -51,12 +64,21 @@ export function Sidebar() {
                   className={
                     isActiveHomeButton ? styles.activeButton : styles.button
                   }
-                >Home</button>
+                >
+                  <img src="/assets/icons/home.svg" alt="" />
+                  Home
+                  </button>
               </li>
               <li>
                 <button
-                className={styles.button}
-                >Notifications</button>
+                onClick={handleNotificationButton}
+                className={
+                  isActiveNotificationButton ? styles.activeButton : styles.button
+                }
+                >
+                  <img src="/assets/icons/notifications.svg" alt="" />
+                  Notifications
+                </button>
               </li>
               <li>
                 <button
@@ -64,7 +86,10 @@ export function Sidebar() {
                    className={
                     isActiveProfileButton ? styles.activeButton : styles.button
                   }
-                >Profile</button>
+                >
+                  <img src="/assets/icons/profile.svg" alt="" />
+                  Profile
+                  </button>
               </li>
             </>
             </ul>

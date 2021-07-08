@@ -14,10 +14,15 @@ interface UserContextData {
   username: string;
   email: string;
   password: string;
+  userBio: string;
   isLoggedIn: boolean;
-  handleLoginSubmit: (form: { email: string; password: string }) => void;
   followingsPosts: Post[];
+  userPosts: Post[];
   loading: boolean;
+  verificationAccount: boolean;
+  userFollowingsCount: number;
+  userFollowersCount: number
+  handleLoginSubmit: (form: { email: string; password: string }) => void;
   listAllFollowingsPosts: () => void;
 }
 
@@ -45,19 +50,25 @@ export function UserProvider({ children }: UserProviderProps) {
 
   const [loading, setLoading] = useState(false); 
   const [followingsPosts, setFollowingsPosts] = useState([])
+  const [userPosts, setUserPosts] = useState([])
 
   const [message, setMessage] = useState(null);
+  const [verificationAccount, setVerificationAccount] = useState(true)
   const [username, setUsername] = useState("");
   const [name, setName] = useState("")
   const [userBio, setUserBio] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [userFollowersCount, setUserFollowersCount] = useState<number>(0)
+  const [userFollowingsCount, setUserFollowingsCount] = useState<number>(0)
+
   useEffect(() => {
     const auth = Cookies.get("@infinitiSpyce:auth");
 
-      if (!auth) {
-        Cookies.remove("@infinitiSpyce:authorization");
+    
+    if (!auth) {
+        // Cookies.remove("@infinitiSpyce:authorization");
         setIsLoggedIn(false);
       } else {
         setIsLoggedIn(true);
@@ -68,16 +79,22 @@ export function UserProvider({ children }: UserProviderProps) {
     const token = Cookies.get("@infinitiSpyce:authorization")
     api.defaults.headers.authorization = `Bearer ${token}`
 
-    return await api
+    await api
       .get("/users/")
       .then((response) => {
         console.log(response)
-        setUsername(response.data.name);
+        setUsername(response.data.username);
         setEmail(response.data.email);
+        setUserBio(response.data.bio)
+        setUserPosts(response.data.posts)
+        setUserFollowersCount(response.data.userFollowersCount.total_followers)
+        setUserFollowingsCount(response.data.userFollowersCount.total_followings)
       })
       .catch((error) => {
         console.log(error)
       });
+
+    await api.get("/users")
   }
 
   useEffect(() => {
@@ -128,10 +145,15 @@ export function UserProvider({ children }: UserProviderProps) {
       username,
       email,
       password,
+      userBio,
       isLoggedIn,
       handleLoginSubmit,
       followingsPosts,
+      userPosts,
       loading,
+      verificationAccount,
+      userFollowersCount,
+      userFollowingsCount,
       listAllFollowingsPosts,
     }}>
       <UserPostsProvider>

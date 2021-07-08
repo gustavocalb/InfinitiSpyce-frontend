@@ -13,6 +13,7 @@ import Router from "next/router";
 import { UserContext } from "./UserContext";
 interface UserPostsData {
   followingsPosts: Post[];
+  userPosts: Post[];
   loading: boolean;
   listAllFollowingsPosts: () => void;
 }
@@ -39,7 +40,7 @@ export function UserPostsProvider({ children }: UserPostsProps) {
 
   const [loading, setLoading] = useState(false); 
   const [followingsPosts, setFollowingsPosts] = useState([])
-  const [followingsPostsArray, setFollowingsPostsArray] = useState([])
+  const [userPosts, setUserPosts] = useState([])
   
   async function listAllFollowingsPosts() {
     const token = Cookies.get("@infinitiSpyce:authorization")
@@ -85,6 +86,7 @@ export function UserPostsProvider({ children }: UserPostsProps) {
     <UserPostsContext.Provider value={{
       loading,
       followingsPosts,
+      userPosts,
       listAllFollowingsPosts
     }}>
       {children}
